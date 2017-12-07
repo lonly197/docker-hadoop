@@ -1,0 +1,38 @@
+# Visual Studio cache/options directory
+.vs/
+.vscode/
+
+# JetBrains Rider
+.idea/
+
+# DS
+.DS_Store
+
+# Backup file
+*.bak
+
+# Temp
+*.tmp
+tmp
+
+# Git
+.git
+.gitignore
+
+# License
+LICENSE
+
+# Version
+VERSION
+
+# Doc
+README.md
+Changelog.md
+docs
+
+# CI
+Makefile
+
+# Docker build
+docker-compose.yml
+Makefile
