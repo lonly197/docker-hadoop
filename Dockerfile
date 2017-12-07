@@ -100,9 +100,6 @@ RUN	set -x \
 RUN set -x \
     ## Install dependency lib 
     && apk add --no-cache --upgrade --virtual=build-dependencies su-exec \
-    && curl http://mirrors.ukfast.co.uk/sites/ftp.apache.org/hadoop/common/hadoop-2.8.1/hadoop-2.8.1.tar.gz | tar xvz && \
-    http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.9.0/hadoop-2.9.0.tar.gz \
-    && mv hadoop-2.8.1 /var/hadoop  \
     ## Download hadoop bin
     && mirror_url=$( \
         wget -q -O - "http://www.apache.org/dyn/closer.cgi/?as_json=1" \
