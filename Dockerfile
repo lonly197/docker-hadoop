@@ -107,7 +107,7 @@ RUN set -x \
         | grep "preferred" \
         | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
         ) \
-    && wget -q -c ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && wget -c -q ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
     # ## Verify python package
     # && apk add --no-cache --upgrade --virtual=build-dependencies gnupg openssl ca-certificates \
     # && update-ca-certificates \
