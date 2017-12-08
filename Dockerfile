@@ -108,6 +108,7 @@ RUN set -x \
         | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
         ) \
     && wget -c -q ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
     # ## Verify python package
     # && apk add --no-cache --upgrade --virtual=build-dependencies gnupg openssl ca-certificates \
     # && update-ca-certificates \
@@ -116,7 +117,6 @@ RUN set -x \
     # && wget -q -c https://dist.apache.org/repos/dist/release/hadoop/common/KEYS \
     # && gpg --import KEYS \
     # && gpg --verify hadoop-${HADOOP_VERSION}.tar.gz.asc hadoop-${HADOOP_VERSION}.tar.gz \
-    # && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
     # && rm -rf hadoop-${HADOOP_VERSION}.tar.gz.asc KEYS \
     ## Install hadoop bin
     && mv /tmp/hadoop-* ${HADOOP_HOME} \
