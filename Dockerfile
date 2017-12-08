@@ -107,9 +107,9 @@ RUN set -x \
         | grep "preferred" \
         | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
         ) \
-    && wget -q -c -O - ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
-    && wget -q -c -O - https://dist.apache.org/repos/dist/release/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz.asc \
-    && wget -q -c -O - https://dist.apache.org/repos/dist/release/hadoop/common/KEYS \
+    && wget -q -c ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && wget -q -c https://dist.apache.org/repos/dist/release/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz.asc \
+    && wget -q -c https://dist.apache.org/repos/dist/release/hadoop/common/KEYS \
     && gpg --import KEYS \
     && gpg --verify hadoop-${HADOOP_VERSION}.tar.gz.asc hadoop-${HADOOP_VERSION}.tar.gz \
     && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
