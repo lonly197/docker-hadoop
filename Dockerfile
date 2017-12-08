@@ -109,7 +109,7 @@ RUN set -x \
     #     | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
     #     ) \
     # && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
-    && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}tar.gz \
+    && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
     && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
     # ## Verify python package
     # && apk add --no-cache --upgrade --virtual=build-dependencies gnupg openssl ca-certificates \
