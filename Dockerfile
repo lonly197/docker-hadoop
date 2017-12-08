@@ -100,7 +100,7 @@ RUN	set -x \
 # Install Hadoop
 RUN set -x \
     ## Install dependency lib 
-    && apk add --no-cache --upgrade --virtual=build-dependencies su-exec openssl ca-certificates \
+    && apk add --no-cache --upgrade --virtual=build-dependencies su-exec gnupg openssl ca-certificates \
     && update-ca-certificates \
     ## Download hadoop bin
     && mirror_url=$( \
@@ -109,12 +109,16 @@ RUN set -x \
         | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
         ) \
     && wget -q -c ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    ## Verify python package
+    && export GNUPGHOME="$(mktemp -d)" \
     && wget -q -c https://dist.apache.org/repos/dist/release/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz.asc \
     && wget -q -c https://dist.apache.org/repos/dist/release/hadoop/common/KEYS \
     && gpg --import KEYS \
     && gpg --verify hadoop-${HADOOP_VERSION}.tar.gz.asc hadoop-${HADOOP_VERSION}.tar.gz \
     && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
+    ## Install hadoop bin
     && mv /tmp/hadoop-* ${HADOOP_HOME} \
+    ## Remove tmp
     && rm -rf hadoop-${HADOOP_VERSION}.tar.gz hadoop-${HADOOP_VERSION}.tar.gz.asc KEYS \
     ## Make soft link
     && ln -s HADOOP_CONF_DIR /etc/hadoop \
