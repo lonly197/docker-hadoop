@@ -21,7 +21,7 @@ LABEL \
 
 # Define environment
 ENV HADOOP_VERSION=${VERSION} \
-    HADOOP_HOME=/usr/local/hadoop-${HADOOP_VERSION} \
+    HADOOP_HOME=/usr/local/hadoop \
     HADOOP_COMMON_HOME=${HADOOP_HOME} \
     HADOOP_HDFS_HOME=${HADOOP_HOME} \
     HADOOP_MAPRED_HOME=${HADOOP_HOME} \
@@ -120,12 +120,11 @@ RUN set -x \
     # && gpg --verify hadoop-${HADOOP_VERSION}.tar.gz.asc hadoop-${HADOOP_VERSION}.tar.gz \
     # && rm -rf hadoop-${HADOOP_VERSION}.tar.gz.asc KEYS \
     ## Install hadoop bin
-    && mv /tmp/hadoop-* ${HADOOP_HOME} \
+    && mv /tmp/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
     ## Remove tmp
     && rm -rf hadoop-${HADOOP_VERSION}.tar.gz \
     ## Make soft link
-    && ln -s HADOOP_CONF_DIR /etc/hadoop \
-    && ln -s /usr/local/hadoop-${HADOOP_VERSION} /usr/local/hadoop-${HADOOP_VERSION%.*} \
+    && ln -s ${HADOOP_CONF_DIR} /etc/hadoop \
     ## Add profile
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
