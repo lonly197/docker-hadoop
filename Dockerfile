@@ -31,7 +31,8 @@ ENV HADOOP_VERSION=${VERSION} \
     HADOOP_TMP_DIR=/hadoop \
     YARN_CONF_DIR=${HADOOP_HOME}/etc/hadoop \
     YARN_HOME=${HADOOP_HOME} \
-    YARN_LOG_DIR=/var/log/yarn
+    YARN_LOG_DIR=/var/log/yarn \
+    PTAH=$PTAH:${HADOOP_HOME}:${HADOOP_HOME}/bin
 
 # Install Base Package
 RUN set -x \
@@ -106,11 +107,18 @@ RUN set -x \
         | grep "preferred" \
         | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
         ) \
-    && wget -q -O - ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
-        | tar -xzf - -C /tmp \
+    && wget -q -c -O - ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && wget -q -c -O - https://dist.apache.org/repos/dist/release/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz.asc \
+    && wget -q -c -O - https://dist.apache.org/repos/dist/release/hadoop/common/KEYS \
+    && gpg --import KEYS \
+    && gpg --verify hadoop-${HADOOP_VERSION}.tar.gz.asc hadoop-${HADOOP_VERSION}.tar.gz \
+    && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
     && mv /tmp/hadoop-* ${HADOOP_HOME} \
-    ## Add profile
+    && rm -rf hadoop-${HADOOP_VERSION}.tar.gz hadoop-${HADOOP_VERSION}.tar.gz.asc KEYS \
+    ## Make soft link
+    && ln -s HADOOP_CONF_DIR /etc/hadoop \
     && ln -s /usr/local/hadoop-${HADOOP_VERSION} /usr/local/hadoop-${HADOOP_VERSION%.*} \
+    ## Add profile
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
        | sed 's/^/export /g' \
@@ -173,4 +181,4 @@ VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_H
 
 EXPOSE 8088 50070
 
-CMD ["/bin/sh","start.sh"]
+CMD ["/bin/sh","bootstrap.sh"]
