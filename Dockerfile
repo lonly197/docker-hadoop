@@ -100,7 +100,8 @@ RUN	set -x \
 # Install Hadoop
 RUN set -x \
     ## Install dependency lib 
-    && apk add --no-cache --upgrade --virtual=build-dependencies su-exec \
+    && apk add --no-cache --upgrade --virtual=build-dependencies su-exec openssl ca-certificates \
+    && update-ca-certificates \
     ## Download hadoop bin
     && mirror_url=$( \
         wget -q -O - "http://www.apache.org/dyn/closer.cgi/?as_json=1" \
