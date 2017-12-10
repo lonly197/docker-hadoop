@@ -19,17 +19,6 @@ LABEL \
     org.label-schema.version=$VERSION \
     org.label-schema.schema-version="1.0"
 
-# Install Base Package
-RUN set -x \
-    && apk add --no-cache --upgrade --virtual=build-dependencies \
-        openssl \
-        supervisor \
-    ## Clean
-    && apk del build-dependencies \
-    && rm -rf /root/.cache \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/*
-
 # Install SSH Key
 RUN set -x \
     && apk add --no-cache --upgrade --virtual=build-dependencies openssh \
@@ -60,6 +49,7 @@ RUN	set -x \
             zlib-dev \
             ca-certificates \
             openssl \
+            supervisor \
     && update-ca-certificates \
     ## Download protobuf
     && wget -q -O - https://github.com/google/protobuf/archive/v${PROTOBUF_VERSION}.tar.gz \
