@@ -85,7 +85,7 @@ RUN set -x \
        | sed 's/^/export /g' \
        > ~/.profile \
     && cp ~/.profile /etc/profile.d/hadoop \
-    && sed -i 's@${JAVA_HOME}@'${JAVA_HOME}'@g' ${HADOOP_CONF_DIR}/hadoop-env.sh \
+    && sed -i 's@${JAVA_HOME}@'${JAVA_HOME}'@g' "${HADOOP_CONF_DIR}/hadoop-env.sh" \
     ## Add user
     && adduser -D -g '' -s /sbin/nologin -u 1000 docker \
     && for user in hadoop hdfs yarn mapred hbase; do \
