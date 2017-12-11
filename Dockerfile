@@ -1,4 +1,4 @@
-FROM lonly/docker-alpine-java:oraclejre-8u152
+FROM lonly/docker-hadoop:2.9.0-env
 
 ARG VERSION=2.9.0
 ARG BUILD_DATE
@@ -34,82 +34,20 @@ ENV HADOOP_VERSION=${VERSION} \
     YARN_LOG_DIR=/var/log/yarn \
     PTAH=$PTAH:${HADOOP_HOME}:${HADOOP_HOME}/bin
 
-# Install Base Package
-RUN set -x \
-    && apk add --no-cache --upgrade --virtual=build-dependencies \
-        openssl \
-        supervisor \
-    ## Clean
-    && apk del build-dependencies \
-    && rm -rf /root/.cache \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/*
-
-# Install SSH Key
-RUN set -x \
-    && apk add --no-cache --upgrade --virtual=build-dependencies openssh \
-    ## Make sure we get fresh keys
-    && rm -rf /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_dsa_key \
-    && ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa \
-    && cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys \
-    && chmod 0600 ~/.ssh/authorized_keys \
-    ## Clean
-    && apk del build-dependencies \
-    && rm -rf /root/.cache \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/*
-
-# Install Protobuf
-RUN	set -x \
-    ## Define Variant
-    && PROTOBUF_VERSION=2.5.0 \
-    && GOOGLETEST_VERSION=1.5.0 \
-	## Update apk
-	&& apk update \
-    ## Install build protobuf package
-    && apk add --no-cache --upgrade --virtual=build-dependencies \
-            autoconf \
-            automake \
-            build-base \
-            libtool \
-            zlib-dev \
-            ca-certificates \
-            openssl \
-    && update-ca-certificates \
-    ## Download protobuf
-    && wget -q -O - https://github.com/google/protobuf/archive/v${PROTOBUF_VERSION}.tar.gz \
-        | tar -zxvf - -C /tmp \
-    && cd /tmp/protobuf-* \
-    ## Download gtest src
-    && wget -q -O - https://github.com/google/googletest/archive/release-${GOOGLETEST_VERSION}.tar.gz \
-        | tar -xzf - \
-    && mv googletest-* gtest \
-    ## Build protobuf
-    && ./autogen.sh \
-    && CXXFLAGS="$CXXFLAGS -fno-delete-null-pointer-checks" ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
-    && make \
-    && make check \
-    && make install \
-    ## Cleanup
-    && apk del build-dependencies \
-    && rm -rf /root/.cache \
-    && rm -rf *.tgz *.tar *.zip \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/*
-
 # Install Hadoop
 RUN set -x \
     ## Install dependency lib 
     && apk add --no-cache --upgrade --virtual=build-dependencies su-exec gnupg openssl ca-certificates \
     && update-ca-certificates \
     ## Download hadoop bin
-    # && mirror_url=$( \
-    #     wget -q -O - "http://www.apache.org/dyn/closer.cgi/?as_json=1" \
-    #     | grep "preferred" \
-    #     | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
-    #     ) \
-    # && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
-    && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && mirror_url=$( \
+        wget -q -O - "http://www.apache.org/dyn/closer.cgi/?as_json=1" \
+        | grep "preferred" \
+        | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
+        ) \
+    && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    # && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    ## Unzip tar
     && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
     # ## Verify python package
     # && apk add --no-cache --upgrade --virtual=build-dependencies gnupg openssl ca-certificates \
@@ -122,10 +60,26 @@ RUN set -x \
     # && rm -rf hadoop-${HADOOP_VERSION}.tar.gz.asc KEYS \
     ## Install hadoop bin
     && mv /tmp/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
+    && ln -s ${HADOOP_CONF_DIR} /etc/hadoop \ 
     ## Remove tmp
-    && rm -rf hadoop-${HADOOP_VERSION}.tar.gz \
-    ## Make soft link
-    && ln -s ${HADOOP_CONF_DIR} /etc/hadoop \
+    && rm -rf hadoop-${HADOOP_VERSION}.tar.gz \      
+    ## Clean
+    && apk del build-dependencies \
+    && rm -rf ${HADOOP_HOME}/share/doc \
+    && for dir in common hdfs mapreduce tools yarn; do \
+         rm -rf ${HADOOP_HOME}/share/hadoop/${dir}/sources; \
+       done \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/common/jdiff \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
+    && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
+    && rm /hadoop-${HADOOP_VERSION}.tar.gz \
+    && rm -rf /root/.cache \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*
+
+# Set Environment
+RUN set -x \
     ## Add profile
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
@@ -165,20 +119,6 @@ RUN set -x \
         ${YARN_LOG_DIR} \
     && chown -R mapred:hadoop \
         ${HADOOP_TMP_DIR}/mapred  \
-    ## Clean
-    && apk del build-dependencies \
-    && rm -rf ${HADOOP_HOME}/share/doc \
-    && for dir in common hdfs mapreduce tools yarn; do \
-         rm -rf ${HADOOP_HOME}/share/hadoop/${dir}/sources; \
-       done \
-    && rm -rf ${HADOOP_HOME}/share/hadoop/common/jdiff \
-    && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
-    && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
-    && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
-    && rm /hadoop-${HADOOP_VERSION}.tar.gz \
-    && rm -rf /root/.cache \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/*
 
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  ${HADOOP_HOME}/
