@@ -46,22 +46,10 @@ RUN set -x \
         | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
         ) \
     && wget ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
-    # && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
     ## Unzip tar
     && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
-    # ## Verify python package
-    # && apk add --no-cache --upgrade --virtual=build-dependencies gnupg openssl ca-certificates \
-    # && update-ca-certificates \
-    # && export GNUPGHOME="$(mktemp -d)" \
-    # && wget -q -c https://dist.apache.org/repos/dist/release/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz.asc \
-    # && wget -q -c https://dist.apache.org/repos/dist/release/hadoop/common/KEYS \
-    # && gpg --import KEYS \
-    # && gpg --verify hadoop-${HADOOP_VERSION}.tar.gz.asc hadoop-${HADOOP_VERSION}.tar.gz \
-    # && rm -rf hadoop-${HADOOP_VERSION}.tar.gz.asc KEYS \
     ## Install hadoop bin
     && mv /tmp/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
-    # && ln -s ${HADOOP_CONF_DIR} /etc/hadoop \ 
-    ## Remove tmp   
     ## Clean
     && apk del build-dependencies \
     && rm -rf ${HADOOP_HOME}/share/doc \
@@ -78,6 +66,8 @@ RUN set -x \
 
 # Set Environment
 RUN set -x \
+    ## Install base package
+    && apk add --no-cache --upgrade --virtual=build-dependencies su-exec \
     ## Add profile
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
@@ -115,7 +105,12 @@ RUN set -x \
         ${HADOOP_TMP_DIR}/nm-local-dir \
         ${HADOOP_TMP_DIR}/yarn-nm-recovery \
         ${YARN_LOG_DIR} \
-    && chown -R mapred:hadoop ${HADOOP_TMP_DIR}/mapred
+    && chown -R mapred:hadoop ${HADOOP_TMP_DIR}/mapred \
+    ## Clean
+    && apk del build-dependencies \
+    && rm -rf /root/.cache \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*
 
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  ${HADOOP_HOME}/
