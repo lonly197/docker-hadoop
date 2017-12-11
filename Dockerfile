@@ -45,7 +45,7 @@ RUN set -x \
         | grep "preferred" \
         | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
         ) \
-    && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    && wget ${mirror_url}hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
     # && wget -q -c -O hadoop-${HADOOP_VERSION}.tar.gz http://mirrors.hust.edu.cn/apache/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
     ## Unzip tar
     && tar -xzvf hadoop-${HADOOP_VERSION}.tar.gz -C /tmp \
@@ -61,8 +61,7 @@ RUN set -x \
     ## Install hadoop bin
     && mv /tmp/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
     # && ln -s ${HADOOP_CONF_DIR} /etc/hadoop \ 
-    ## Remove tmp
-    && rm -rf hadoop-${HADOOP_VERSION}.tar.gz \      
+    ## Remove tmp   
     ## Clean
     && apk del build-dependencies \
     && rm -rf ${HADOOP_HOME}/share/doc \
@@ -85,7 +84,7 @@ RUN set -x \
        | sed 's/^/export /g' \
        > ~/.profile \
     && cp ~/.profile /etc/profile.d/hadoop \
-    && sed -i 's@${JAVA_HOME}@'${JAVA_HOME}'@g' "${HADOOP_CONF_DIR}/hadoop-env.sh" \
+    && sed -i 's@${JAVA_HOME}@'${JAVA_HOME}'@g' ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh \
     ## Add user
     && adduser -D -g '' -s /sbin/nologin -u 1000 docker \
     && for user in hadoop hdfs yarn mapred hbase; do \
@@ -116,8 +115,7 @@ RUN set -x \
         ${HADOOP_TMP_DIR}/nm-local-dir \
         ${HADOOP_TMP_DIR}/yarn-nm-recovery \
         ${YARN_LOG_DIR} \
-    && chown -R mapred:hadoop \
-        ${HADOOP_TMP_DIR}/mapred  \
+    && chown -R mapred:hadoop ${HADOOP_TMP_DIR}/mapred
 
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  ${HADOOP_HOME}/
