@@ -60,7 +60,7 @@ RUN set -x \
     # && rm -rf hadoop-${HADOOP_VERSION}.tar.gz.asc KEYS \
     ## Install hadoop bin
     && mv /tmp/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} \
-    && ln -s ${HADOOP_CONF_DIR} /etc/hadoop \ 
+    # && ln -s ${HADOOP_CONF_DIR} /etc/hadoop \ 
     ## Remove tmp
     && rm -rf hadoop-${HADOOP_VERSION}.tar.gz \      
     ## Clean
