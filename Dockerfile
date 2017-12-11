@@ -73,7 +73,6 @@ RUN set -x \
     && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
     && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
     && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
-    && rm /hadoop-${HADOOP_VERSION}.tar.gz \
     && rm -rf /root/.cache \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
