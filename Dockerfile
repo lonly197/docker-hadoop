@@ -67,7 +67,7 @@ RUN set -x \
 # Set Environment
 RUN set -x \
     ## Install base package
-    && apk add --no-cache --upgrade --virtual=build-dependencies su-exec \
+    && apk add --no-cache --upgrade su-exec \
     ## Add profile
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
@@ -107,7 +107,6 @@ RUN set -x \
         ${YARN_LOG_DIR} \
     && chown -R mapred:hadoop ${HADOOP_TMP_DIR}/mapred \
     ## Clean
-    && apk del build-dependencies \
     && rm -rf /root/.cache \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
