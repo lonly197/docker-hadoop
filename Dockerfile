@@ -100,6 +100,9 @@ RUN set -x \
     && chown -R hdfs:hadoop \
         ${HADOOP_TMP_DIR}/dfs \
         ${HADOOP_LOG_DIR} \
+    && chown -R hadoop:hadoop \
+        ${HADOOP_TMP_DIR}/dfs \
+        ${HADOOP_LOG_DIR} \
     && chown -R yarn:hadoop \
         ${HADOOP_TMP_DIR}/yarn \
         ${HADOOP_TMP_DIR}/nm-local-dir \
