@@ -32,6 +32,8 @@ ENV HADOOP_VERSION=${VERSION} \
     YARN_CONF_DIR=${HADOOP_HOME}/etc/hadoop \
     YARN_HOME=${HADOOP_HOME} \
     YARN_LOG_DIR=/var/log/yarn \
+    YARN_REMOTE_APP_LOG_DIR=/tmp/logs \
+    YARN_APP_MAPRED_STAGING_DIR=/tmp/hadoop-yarn/staging\
     PTAH=$PTAH:${HADOOP_HOME}:${HADOOP_HOME}/bin
 
 # Install Hadoop
