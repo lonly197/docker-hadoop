@@ -1,4 +1,4 @@
-FROM lonly/docker-hadoop:2.9.0-env
+FROM lonly/docker-hadoop:hadoop2-env
 
 ARG VERSION=2.9.0
 ARG BUILD_DATE
@@ -114,13 +114,6 @@ RUN set -x \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
 
-COPY etc/*  ${HADOOP_CONF_DIR}/
-COPY bin/*  ${HADOOP_HOME}/
-
 WORKDIR ${HADOOP_HOME}
 
 VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_HOME}"]
-
-EXPOSE 8088 50070
-
-CMD ["/bin/sh","bootstrap.sh"]
