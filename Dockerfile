@@ -20,7 +20,7 @@ LABEL \
     org.label-schema.schema-version="1.0"
 
 # Define environment
-ENV HADOOP_VERSION=${VERSION} \
+ENV HADOOP_VERSION=2.9.0 \
     HADOOP_HOME=/usr/local/hadoop \
     HADOOP_COMMON_HOME=${HADOOP_HOME} \
     HADOOP_HDFS_HOME=${HADOOP_HOME} \
