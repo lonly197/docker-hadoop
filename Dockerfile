@@ -113,14 +113,3 @@ RUN set -x \
     && rm -rf /root/.cache \
     && rm -rf /var/cache/apk/* \
     && rm -rf /tmp/*
-
-WORKDIR ${HADOOP_HOME}
-
-VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_HOME}"]
-
-# Hdfs ports
-EXPOSE 50010 50020 50070 50075 50090 8020 9000
-# Mapred ports
-EXPOSE 10020 19888
-#Yarn ports
-EXPOSE 8030 8031 8032 8033 8040 8042 8088
