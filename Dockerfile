@@ -1,6 +1,6 @@
 FROM lonly/docker-alpine-java:oraclejre-8u152
 
-ARG VERSION=2.9.0
+ARG VERSION=hadoop2-env
 ARG BUILD_DATE
 ARG VCS_REF
 
