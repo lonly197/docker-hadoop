@@ -1,6 +1,6 @@
 FROM lonly/docker-hadoop:hadoop2-env
 
-ARG VERSION=2.9.0
+ARG VERSION=2.9.0-base
 ARG BUILD_DATE
 ARG VCS_REF
 
