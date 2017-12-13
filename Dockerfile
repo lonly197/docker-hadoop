@@ -19,7 +19,19 @@ LABEL \
     org.label-schema.version=$VERSION \
     org.label-schema.schema-version="1.0"
 
+WORKDIR ${HADOOP_HOME}
+
+VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_HOME}"]
+
+# Hdfs ports
+EXPOSE 50010 50020 50070 50075 50090 8020 9000
+# Mapred ports
+EXPOSE 10020 19888
+#Yarn ports
+EXPOSE 8030 8031 8032 8033 8040 8042 8088
+
 COPY etc/*  ${HADOOP_CONF_DIR}/
-COPY bin/*  ${HADOOP_HOME}/
+COPY bin/*  /usr/local/bin/
+COPY lib/*  /usr/local/lib/
 
 ENTRYPOINT ["/bin/sh","bootstrap.sh"]
