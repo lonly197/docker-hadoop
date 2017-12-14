@@ -27,10 +27,11 @@ wait_until() {
 }
 
 # apply template
+chmod 750 /usr/local/bin/mustache.sh
 for template in $(ls ${HADOOP_CONF_DIR}/*.mustache)
 do
     conf_file=${template%.mustache}
-    cat ${conf_file}.mustache | mustache.sh > ${conf_file}
+    cat ${conf_file}.mustache | /usr/local/bin/mustache.sh > ${conf_file}
 done
 
 # start hadoop service
