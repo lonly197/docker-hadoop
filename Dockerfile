@@ -34,4 +34,4 @@ COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
 COPY lib/*  /usr/local/lib/
 
-ENTRYPOINT ["/bin/sh","/usr/local/bin/bootstrap.shh"]
+ENTRYPOINT ["/bin/sh","/usr/local/bin/bootstrap.sh"]
