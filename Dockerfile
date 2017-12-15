@@ -20,7 +20,7 @@ LABEL \
     org.label-schema.schema-version="1.0"
 
 RUN set -x \
-    apk add
+    && apk add --no-cache --upgrade base \
 
 WORKDIR ${HADOOP_HOME}
 
