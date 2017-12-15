@@ -21,6 +21,10 @@ LABEL \
 
 RUN set -x \
     && apk add --no-cache --upgrade base \
+    ## Clean
+    && rm -rf /root/.cache \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/*
 
 WORKDIR ${HADOOP_HOME}
 
